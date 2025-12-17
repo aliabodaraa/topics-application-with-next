@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { Chip } from '@nextui-org/react';
-import { db } from '@/db';
-import paths from '@/paths';
+import Link from "next/link";
+import { db } from "@/db";
+import paths from "@/paths";
+import { Chip } from "../nextui-org-components";
 
 export default async function TopicList() {
   const topics = await db.topic.findMany();
@@ -10,9 +10,7 @@ export default async function TopicList() {
     return (
       <div key={topic.id}>
         <Link href={paths.topicShow(topic.slug)}>
-          <Chip color="warning" variant="shadow">
-            {topic.slug}
-          </Chip>
+          <Chip>{topic.slug}</Chip>
         </Link>
       </div>
     );
