@@ -1,4 +1,4 @@
-import { Skeleton } from '@nextui-org/react';
+import { Skeleton } from "../nextui-org-components";
 
 export default function PostShowLoading() {
   return (

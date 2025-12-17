@@ -26,6 +26,7 @@ export async function createPost(
   formState: CreatePostFormState,
   formData: FormData
 ): Promise<CreatePostFormState> {
+  const slug_ = decodeURIComponent(slug); //i added this ow cause of issue with white spaces in topic slug is %20%
   const result = createPostSchema.safeParse({
     title: formData.get("title"),
     content: formData.get("content"),
@@ -45,9 +46,10 @@ export async function createPost(
       },
     };
   }
-
+  const ss = await db.topic.findFirst();
+  console.log(ss, "----------------------");
   const topic = await db.topic.findFirst({
-    where: { slug },
+    where: { slug: slug_ },
   });
 
   if (!topic) {
@@ -84,6 +86,6 @@ export async function createPost(
     }
   }
 
-  revalidatePath(paths.topicShow(slug));
-  redirect(paths.postShow(slug, post.id));
+  revalidatePath(paths.topicShow(slug_));
+  redirect(paths.postShow(slug_, post.id));
 }
