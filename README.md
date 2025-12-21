@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Topics System - Social Discussion Platform
 
-## Getting Started
+A modern social platform where users can create topics, share posts, and engage in discussions with OAuth2 authentication.
 
-First, run the development server:
+<div className="text-center">
+  <h3 className="flex flex justify-center gap-x-4">
+    <a
+      href="https://topics-application-with-next.vercel.app/"
+      target="_blank"
+      className="mt-3"
+    >
+      Live Demo 🚀
+    </a>
+  </h3>
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- **OAuth2 Authentication** - Sign in with Google or GitHub
+- **Topic Creation** - Create and manage discussion topics
+- **Social Interaction** - Posts, comments, likes, and tags
+- **Modern Stack** - Next.js 16, Tailwind CSS, NextUI
+- **Serverless Database** - Neon PostgreSQL with Prisma
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React, TypeScript
+- **Styling**: Tailwind CSS, NextUI Components
+- **Backend**: Next.js API Routes, Server Actions
+- **Database**: Neon PostgreSQL (Serverless)
+- **ORM**: Prisma with Neon Adapter
+- **Authentication**: NextAuth.js (Google/GitHub OAuth)
+- **Deployment**: Vercel
+
+## 📦 Project Structure
+```
+topics-system/
+├── app/ # Next.js app router
+│ ├── api/ # API routes
+│ ├── auth/ # Authentication pages
+│ └── topic/ # Topic pages
+├── components/ # React components
+│ ├── topic/ # Topic-related components
+│ ├── post/ # Post and comment components
+│ └── ui/ # Reusable UI components
+├── lib/ # Utilities and configs
+│ ├── db/ # Database configuration
+│ ├── auth.ts # Auth configuration
+│ └── actions.ts # Server actions
+├── prisma/ # Database schema
+│ └── schema.prisma
+└── public/ # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🗄️ Database Schema (Prisma)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  topics   Topic[]
+  posts    Post[]
+  comments Comment[]
+}
 
-## Learn More
+model Topic {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  tags        String[]
+  createdAt   DateTime @default(now())
 
-To learn more about Next.js, take a look at the following resources:
+  createdBy User   @relation(fields: [userId], references: [id])
+  userId    String
+  posts     Post[]
+}
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  topic    Topic  @relation(fields: [topicId], references: [id])
+  topicId  String
+  comments Comment[]
+}
 
-## Deploy on Vercel
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   String
+}
+```
+## Environment Variables
+```
+DATABASE_URL="postgresql://..."
+NEXTAUTH_URL="NEXTAUTH_URL"
+NEXTAUTH_SECRET="your-secret"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# GitHub OAuth
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+
+# Google OAuth
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+```
+
